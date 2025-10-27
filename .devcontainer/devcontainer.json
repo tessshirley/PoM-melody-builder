@@ -1,0 +1,55 @@
+{
+    "name": "Physics Music Melody Builder",
+    "image": "mcr.microsoft.com/devcontainers/universal:2",
+    
+    "hostRequirements": {
+        "cpus": 2,
+        "memory": "4gb",
+        "storage": "32gb"
+    },
+    
+    "forwardPorts": [8080],
+    
+    "portsAttributes": {
+        "8080": {
+            "label": "Web Application",
+            "onAutoForward": "openPreview"
+        }
+    },
+    
+    "postCreateCommand": "echo '🎵 Physics of Music environment ready!'",
+    
+    "postStartCommand": "python3 -m http.server 8080 > /tmp/server.log 2>&1 &",
+    
+    "customizations": {
+        "codespaces": {
+            "openFiles": [
+                "README.md",
+                "index.html"
+            ]
+        },
+        "vscode": {
+            "extensions": [
+                "ms-vscode.live-server",
+                "ritwickdey.LiveServer",
+                "esbenp.prettier-vscode",
+                "bradlc.vscode-tailwindcss",
+                "formulahendry.auto-rename-tag"
+            ],
+            "settings": {
+                "editor.defaultFormatter": "esbenp.prettier-vscode",
+                "editor.formatOnSave": true,
+                "editor.tabSize": 2,
+                "files.autoSave": "afterDelay"
+            }
+        }
+    },
+    
+    "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers/features/node:1": {
+            "nodeGypDependencies": true,
+            "version": "18"
+        }
+    }
+}

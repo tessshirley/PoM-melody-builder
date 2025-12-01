@@ -1,218 +1,347 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  padding: 20px;
-}
-
-.container {
-  max-width: 1000px;
-  margin: 0 auto;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-}
-
-header {
-  background: #2c3e50;
-  color: white;
-  padding: 30px;
-  text-align: center;
-}
-
-header h1 {
-  font-size: 2.5em;
-  margin-bottom: 10px;
-}
-
-.subtitle {
-  font-size: 1.2em;
-  opacity: 0.9;
-}
-
+/* Enhanced controls for instrument selection */
 .controls {
-  padding: 20px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
-  display: grid;
-  grid-template-columns: auto 1fr auto 1fr auto 1fr auto 1fr auto auto;
-  gap: 10px;
-  align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-bottom: 1px solid #dee2e6;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    align-items: center;
+    color: white;
 }
 
 .controls label {
-  font-weight: bold;
-  color: #495057;
-  white-space: nowrap;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 
-.controls select,
-.controls button {
-  padding: 8px 12px;
-  border: 2px solid #dee2e6;
-  border-radius: 8px;
-  font-size: 14px;
-  background: white;
+.controls select {
+    padding: 8px 12px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    font-size: 14px;
+    background: rgba(255,255,255,0.9);
+    color: #2c3e50;
 }
 
 .controls button {
-  background: #3498db;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background 0.3s;
-  white-space: nowrap;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #3498db;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
 }
 
 .controls button:hover {
-  background: #2980b9;
+    background: #2980b9;
+    transform: translateY(-2px);
 }
 
-/* instrument info display */
-
+/* Instrument info panel */
 .instrument-info {
-  padding: 15px;
-  background: #e8f4f8;
-  border-bottom: 1px solid #bde0fe;
-  text-align: center;
+    padding: 15px;
+    background: linear-gradient(to right, #2c3e50, #4a6572);
+    color: white;
+    border-bottom: 1px solid #34495e;
+    text-align: center;
+    border-radius: 0 0 10px 10px;
 }
 
-instrument-info h4 {
-  margin: 0;
-  color: #2c3e50;
-  font-size: 1.1em;
+.instrument-info h4 {
+    margin: 0 0 8px 0;
+    color: #ecf0f1;
+    font-size: 1.2em;
 }
 
+.instrument-info p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+.instrument-info small {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 3px 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    font-size: 0.8em;
+}
+
+/* Updated keyboard with instrument-themed buttons */
 .keyboard {
-  padding: 30px;
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-  background: white;
+    padding: 30px;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    background: #f8f9fa;
+    min-height: 120px;
 }
 
 .note-btn {
-  padding: 15px 20px;
-  border: 3px solid #34495e;
-  background: white;
-  color: #2c3e50;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-width: 60px;
+    padding: 15px 20px;
+    border: 3px solid;
+    background: white;
+    color: #2c3e50;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 60px;
+    position: relative;
+    overflow: hidden;
 }
 
 .note-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Different border colors based on instrument family */
+.strings-mode .note-btn {
+    border-color: #e74c3c;
+}
+
+.woodwinds-mode .note-btn {
+    border-color: #27ae60;
+}
+
+.brass-mode .note-btn {
+    border-color: #f39c12;
+}
+
+.synthetic-mode .note-btn {
+    border-color: #9b59b6;
 }
 
 .note-btn.recommended {
-  border-color: #27ae60;
-  background: #d5f4e6;
+    position: relative;
+}
+
+.note-btn.recommended::before {
+    content: '★';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: #3498db;
+    font-size: 12px;
+}
+
+/* Different background colors for recommended notes based on instrument */
+.strings-mode .note-btn.recommended {
+    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+    color: #c62828;
+}
+
+.woodwinds-mode .note-btn.recommended {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    color: #2e7d32;
+}
+
+.brass-mode .note-btn.recommended {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    color: #ef6c00;
 }
 
 .note-btn.active {
-  background: #3498db;
-  color: white;
-  border-color: #2980b9;
+    color: white;
+    transform: scale(1.05);
 }
 
-.melody-display {
-  padding: 20px;
-  background: #e8f4f8;
-  border-top: 1px solid #bde0fe;
+/* Active state colors based on instrument */
+.strings-mode .note-btn.active {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    border-color: #c0392b;
 }
 
-.melody-display h3 {
-  margin-bottom: 10px;
-  color: #2c3e50;
+.woodwinds-mode .note-btn.active {
+    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+    border-color: #229954;
 }
 
-#melody-notes {
-  font-family: "Courier New", monospace;
-  font-size: 18px;
-  color: #e74c3c;
-  font-weight: bold;
+.brass-mode .note-btn.active {
+    background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+    border-color: #d35400;
 }
 
+.synthetic-mode .note-btn.active {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    border-color: #8e44ad;
+}
+
+/* Visualization styling */
 .visualization {
-  padding: 30px;
-  background: white;
-  border-top: 1px solid #dee2e6;
+    padding: 30px;
+    background: white;
+    border-top: 1px solid #dee2e6;
+    position: relative;
 }
 
 .visualization h3 {
-  margin-bottom: 20px;
-  color: #2c3e50;
-  text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    text-align: center;
+    font-size: 1.5em;
 }
 
 #waveform-canvas {
-  display: block;
-  margin: 0 auto;
-  border: 2px solid #bdc3c7;
-  border-radius: 8px;
-  background: #f8f9fa;
+    display: block;
+    margin: 0 auto;
+    border: 3px solid #bdc3c7;
+    border-radius: 8px;
+    background: #f8f9fa;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
+/* Physics info panel - now with instrument-themed headers */
 .physics-info {
-  padding: 25px;
-  background: #2c3e50;
-  color: white;
+    padding: 25px;
+    background: #2c3e50;
+    color: white;
+    border-radius: 0 0 15px 15px;
 }
 
 .physics-info h3 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 1.5em;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    padding-bottom: 10px;
+    border-bottom: 2px solid;
+}
+
+/* Different header colors based on instrument */
+.strings-mode .physics-info h3 {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+.woodwinds-mode .physics-info h3 {
+    border-color: #27ae60;
+    color: #27ae60;
+}
+
+.brass-mode .physics-info h3 {
+    border-color: #f39c12;
+    color: #f39c12;
+}
+
+.synthetic-mode .physics-info h3 {
+    border-color: #9b59b6;
+    color: #9b59b6;
 }
 
 .data-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
 }
 
 .data-item {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 15px;
-  border-radius: 8px;
-  text-align: center;
+    background: rgba(255,255,255,0.1);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.data-item:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.15);
 }
 
 .data-item label {
-  display: block;
-  font-size: 0.9em;
-  opacity: 0.8;
-  margin-bottom: 5px;
+    display: block;
+    font-size: 0.9em;
+    opacity: 0.8;
+    margin-bottom: 5px;
 }
 
 .data-item span {
-  font-size: 1.2em;
-  font-weight: bold;
-  color: #3498db;
+    font-size: 1.3em;
+    font-weight: bold;
+    display: block;
+    margin-top: 5px;
 }
 
-/* for smaller screens */
+/* Instrument-specific colors for physics data */
+.strings-mode .data-item span {
+    color: #e74c3c;
+}
+
+.woodwinds-mode .data-item span {
+    color: #27ae60;
+}
+
+.brass-mode .data-item span {
+    color: #f39c12;
+}
+
+/* Footer styling */
+footer {
+    padding: 15px;
+    text-align: center;
+    background: #34495e;
+    color: #ecf0f1;
+    font-size: 0.9em;
+    border-radius: 0 0 15px 15px;
+}
+
+/* Instrument badges for current selection */
+.instrument-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.strings-badge {
+    background: #e74c3c;
+    color: white;
+}
+
+.woodwinds-badge {
+    background: #27ae60;
+    color: white;
+}
+
+.brass-badge {
+    background: #f39c12;
+    color: white;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
-  .controls {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-  .controls label {
-    margin-top: 8px;
-  }
+    .controls {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .keyboard {
+        padding: 15px;
+        gap: 5px;
+    }
+    
+    .note-btn {
+        padding: 12px 15px;
+        min-width: 50px;
+        font-size: 14px;
+    }
+    
+    #waveform-canvas {
+        width: 100%;
+        height: 150px;
+    }
+    
+    .data-grid {
+        grid-template-columns: 1fr;
+    }
 }

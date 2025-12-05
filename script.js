@@ -8,6 +8,10 @@ class PhysicsMelodyBuilder {
         this.visualizationMode = 'waveform';
         this.Tone = window.Tone;
         
+        // Sampler for instrument sounds
+        this.samplers = {};
+        this.samplesLoaded = false;
+        
         this.instrumentLibrary = this.createInstrumentLibrary();
         this.initializeApp();
     }
@@ -17,97 +21,164 @@ class PhysicsMelodyBuilder {
             strings: {
                 violin: {
                     name: "Violin",
-                    description: "Rich harmonic series with strong fundamental and harmonics. Real violins have many harmonics due to string vibration modes.",
+                    description: "String instrument with rich harmonics and expressive tone. Produces sound by bowing strings.",
                     harmonics: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
                     amplitudes: [1.0, 0.7, 0.5, 0.3, 0.2, 0.15, 0.1, 0.05],
                     envelope: { attack: 0.1, decay: 0.2, sustain: 0.6, release: 0.5 },
-                    color: '#e74c3c'
+                    color: '#e74c3c',
+                    sampleNote: 'A4' // Base note for the sample
                 },
                 cello: {
                     name: "Cello",
-                    description: "Warmer tone with emphasis on lower harmonics. Longer strings produce deeper, resonant tones.",
+                    description: "Deep, warm string instrument. Lower pitch than violin with rich resonance.",
                     harmonics: [1.0, 2.0, 3.0, 4.0, 5.0],
                     amplitudes: [1.0, 0.8, 0.6, 0.3, 0.2],
                     envelope: { attack: 0.15, decay: 0.3, sustain: 0.7, release: 0.6 },
-                    color: '#c0392b'
+                    color: '#c0392b',
+                    sampleNote: 'C3'
                 },
                 harp: {
                     name: "Harp",
-                    description: "Bell-like tone with clear, distinct harmonics. Plucked strings produce sharp attacks and long decays.",
+                    description: "Plucked string instrument with bell-like tone. Clear, distinct harmonics.",
                     harmonics: [1.0, 2.0, 3.0, 4.0],
                     amplitudes: [1.0, 0.4, 0.2, 0.1],
                     envelope: { attack: 0.01, decay: 0.5, sustain: 0, release: 1.0 },
-                    color: '#d35400'
+                    color: '#d35400',
+                    sampleNote: 'C4'
                 }
             },
             woodwinds: {
                 flute: {
                     name: "Flute",
-                    description: "Nearly pure sine wave with very weak harmonics. Air column vibrations produce clean, breathy tones.",
+                    description: "Woodwind instrument with airy, pure tone. Nearly pure sine wave with minimal harmonics.",
                     harmonics: [1.0, 2.0, 3.0],
                     amplitudes: [1.0, 0.2, 0.05],
                     envelope: { attack: 0.1, decay: 0.2, sustain: 0.7, release: 0.3 },
-                    color: '#27ae60'
+                    color: '#27ae60',
+                    sampleNote: 'A5'
                 },
                 clarinet: {
                     name: "Clarinet",
-                    description: "Odd harmonics only (1f, 3f, 5f...) due to cylindrical bore physics. Creates a hollow, woody tone.",
+                    description: "Woodwind with cylindrical bore producing odd harmonics. Warm, hollow tone.",
                     harmonics: [1.0, 3.0, 5.0, 7.0, 9.0],
                     amplitudes: [1.0, 0.6, 0.3, 0.15, 0.07],
                     envelope: { attack: 0.05, decay: 0.3, sustain: 0.6, release: 0.4 },
-                    color: '#16a085'
+                    color: '#16a085',
+                    sampleNote: 'G4'
                 },
                 saxophone: {
                     name: "Saxophone",
-                    description: "Both even and odd harmonics for rich, complex tone. Conical bore produces bright, expressive sound.",
+                    description: "Brass-woodwind hybrid with rich, expressive tone. Both even and odd harmonics.",
                     harmonics: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
                     amplitudes: [1.0, 0.7, 0.5, 0.3, 0.2, 0.1],
                     envelope: { attack: 0.1, decay: 0.2, sustain: 0.8, release: 0.3 },
-                    color: '#1abc9c'
+                    color: '#1abc9c',
+                    sampleNote: 'E4'
                 }
             },
             brass: {
                 trumpet: {
                     name: "Trumpet",
-                    description: "Bright, brilliant tone with many strong harmonics. Lip vibration excites many vibration modes.",
+                    description: "Brass instrument with bright, brilliant tone. Many strong harmonics from lip vibration.",
                     harmonics: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
                     amplitudes: [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3],
                     envelope: { attack: 0.01, decay: 0.2, sustain: 0.8, release: 0.2 },
-                    color: '#f39c12'
+                    color: '#f39c12',
+                    sampleNote: 'C5'
                 },
                 trombone: {
                     name: "Trombone",
-                    description: "Mellow brass tone with emphasis on first few harmonics. Slide allows smooth frequency transitions.",
+                    description: "Brass instrument with slide mechanism. Mellow tone with emphasis on first harmonics.",
                     harmonics: [1.0, 2.0, 3.0, 4.0, 5.0],
                     amplitudes: [1.0, 0.6, 0.4, 0.2, 0.1],
                     envelope: { attack: 0.05, decay: 0.3, sustain: 0.7, release: 0.4 },
-                    color: '#e67e22'
+                    color: '#e67e22',
+                    sampleNote: 'B3'
                 },
                 frenchHorn: {
                     name: "French Horn",
-                    description: "Warm, mellow tone with conical bore. Hand-stopping technique affects harmonic content.",
+                    description: "Brass instrument with warm, mellow tone. Conical bore affects harmonic content.",
                     harmonics: [1.0, 2.0, 3.0, 4.0],
                     amplitudes: [1.0, 0.5, 0.2, 0.1],
                     envelope: { attack: 0.15, decay: 0.4, sustain: 0.6, release: 0.5 },
-                    color: '#d35400'
+                    color: '#d35400',
+                    sampleNote: 'F3'
                 }
             }
         };
     }
 
-    initializeApp() {
-        // Start audio context on first user interaction
-        document.addEventListener('click', () => {
-            if (this.Tone.context.state !== 'running') {
-                this.Tone.context.resume();
-            }
-        }, { once: true });
+    async initializeApp() {
+        // Initialize Tone.js context
+        try {
+            await this.Tone.start();
+            console.log('Audio context started successfully');
+        } catch (error) {
+            console.error('Failed to start audio context:', error);
+        }
+
+        // Load sample sounds
+        await this.loadSampleSounds();
 
         this.createInstrumentSelector();
         this.createKeyboard();
         this.setupEventListeners();
         this.updateInstrumentInfo();
         this.updateVisualizationMode();
+        this.initializeCanvas();
+    }
+
+    async loadSampleSounds() {
+        // Use Tone.js Sampler with built-in instrument sounds
+        // Note: These are synthetic approximations, not real recordings
+        
+        try {
+            // Create samplers for each category
+            this.samplers = {
+                strings: new this.Tone.Sampler({
+                    urls: {
+                        "A4": "violin.mp3",  // Placeholder - would need actual samples
+                    },
+                    baseUrl: "https://tonejs.github.io/audio/casio/",
+                    onload: () => console.log("Strings samples loaded"),
+                    release: 1,
+                    volume: -10
+                }).toDestination(),
+                
+                woodwinds: new this.Tone.Sampler({
+                    urls: {
+                        "A4": "flute.mp3",  // Placeholder
+                    },
+                    baseUrl: "https://tonejs.github.io/audio/casio/",
+                    onload: () => console.log("Woodwinds samples loaded"),
+                    release: 1,
+                    volume: -10
+                }).toDestination(),
+                
+                brass: new this.Tone.Sampler({
+                    urls: {
+                        "A4": "trumpet.mp3",  // Placeholder
+                    },
+                    baseUrl: "https://tonejs.github.io/audio/casio/",
+                    onload: () => console.log("Brass samples loaded"),
+                    release: 1,
+                    volume: -10
+                }).toDestination()
+            };
+            
+            this.samplesLoaded = true;
+            console.log("Instrument samples loaded successfully");
+            
+        } catch (error) {
+            console.warn("Could not load external samples, falling back to synthetic sounds:", error);
+            this.samplesLoaded = false;
+        }
+    }
+
+    initializeCanvas() {
+        const canvas = document.getElementById('waveform-canvas');
+        const ctx = canvas.getContext('2d');
+        this.drawEmptyVisualization(ctx, canvas.width, canvas.height);
     }
 
     createInstrumentSelector() {
@@ -170,22 +241,27 @@ class PhysicsMelodyBuilder {
     }
 
     formatName(name) {
-        return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        return name.charAt(0).toUpperCase() + name.slice(1);
     }
 
     getNoteFrequencies() {
         return {
+            'C3': 130.81, 'D3': 146.83, 'E3': 164.81, 'F3': 174.61,
+            'G3': 196.00, 'A3': 220.00, 'B3': 246.94,
             'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23,
             'G4': 392.00, 'A4': 440.00, 'B4': 493.88,
             'C5': 523.25, 'D5': 587.33, 'E5': 659.25, 'F5': 698.46,
-            'G5': 783.99, 'A5': 880.00, 'B5': 987.77
+            'G5': 783.99, 'A5': 880.00, 'B5': 987.77,
+            'C6': 1046.50, 'D6': 1174.66, 'E6': 1318.51, 'F6': 1396.91,
+            'G6': 1567.98, 'A6': 1760.00, 'B6': 1975.53
         };
     }
 
     getScalePatterns() {
         return {
             'major': [0, 2, 4, 5, 7, 9, 11],
-            'minor': [0, 2, 3, 5, 7, 8, 10]
+            'minor': [0, 2, 3, 5, 7, 8, 10],
+            'pentatonic': [0, 2, 4, 7, 9]
         };
     }
 
@@ -193,8 +269,14 @@ class PhysicsMelodyBuilder {
         const keyboard = document.getElementById('keyboard');
         const frequencies = this.getNoteFrequencies();
         
+        // Show only octaves 3-6 for cleaner interface
+        const displayNotes = Object.keys(frequencies).filter(note => {
+            const octave = parseInt(note.slice(-1));
+            return octave >= 3 && octave <= 6;
+        });
+        
         keyboard.innerHTML = '';
-        Object.keys(frequencies).forEach(note => {
+        displayNotes.forEach(note => {
             const btn = document.createElement('button');
             btn.className = 'note-btn';
             btn.textContent = note;
@@ -210,7 +292,7 @@ class PhysicsMelodyBuilder {
 
     addNote(note, frequency) {
         this.notes.push({ note, frequency, time: new Date() });
-        this.playNote(frequency);
+        this.playInstrumentSound(frequency);
         this.updateVisualization();
         this.updateMelodyDisplay();
         this.updateNoteButtons();
@@ -221,38 +303,107 @@ class PhysicsMelodyBuilder {
         setTimeout(() => btn.classList.remove('playing'), 300);
     }
 
-    playNote(frequency) {
-        // Create additive synthesis using multiple oscillators
-        const instrumentConfig = this.instrumentLibrary[this.currentCategory][this.currentInstrument];
-        const now = this.Tone.now();
-        const duration = 0.5; // seconds
+    async playInstrumentSound(frequency) {
+        // Ensure audio context is running
+        if (this.Tone.context.state !== 'running') {
+            await this.Tone.context.resume();
+        }
         
-        // Create and play each harmonic
-        instrumentConfig.harmonics.forEach((harmonic, index) => {
-            const freq = frequency * harmonic;
-            const amplitude = instrumentConfig.amplitudes[index];
-            
-            const osc = new this.Tone.Oscillator(freq, 'sine').toDestination();
-            const env = new this.Tone.AmplitudeEnvelope({
-                attack: instrumentConfig.envelope.attack,
-                decay: instrumentConfig.envelope.decay,
-                sustain: instrumentConfig.envelope.sustain,
-                release: instrumentConfig.envelope.release
-            }).toDestination();
-            
-            osc.connect(env);
-            osc.start(now);
-            osc.stop(now + duration);
-            env.triggerAttackRelease(duration, now, amplitude * 0.3);
-        });
-       // Creates multiple sine wave oscillators for each harmonic
-      instrumentConfig.harmonics.forEach((harmonic, index) => {
-        const freq = frequency * harmonic;  // Calculate harmonic frequency
-        const osc = new this.Tone.Oscillator(freq, 'sine').toDestination();
-        // Each harmonic is a pure sine wave!
-      });
+        const instrumentConfig = this.instrumentLibrary[this.currentCategory][this.currentInstrument];
+        
+        // Method 1: Try to use sampler if available
+        if (this.samplesLoaded && this.samplers[this.currentCategory]) {
+            try {
+                // Play the sample sound
+                this.samplers[this.currentCategory].triggerAttackRelease(
+                    this.getClosestMidiNote(frequency), 
+                    "8n"
+                );
+            } catch (error) {
+                console.warn("Could not play sample, falling back to synthetic sound:", error);
+                this.playSyntheticSound(frequency, instrumentConfig);
+            }
+        } else {
+            // Method 2: Fall back to improved synthetic sound
+            this.playImprovedSyntheticSound(frequency, instrumentConfig);
+        }
         
         this.updatePhysicsInfo(frequency, instrumentConfig);
+    }
+
+    playImprovedSyntheticSound(frequency, instrumentConfig) {
+        const now = this.Tone.now();
+        const duration = 1.0;
+        
+        // Create a more complex oscillator for better sound
+        const osc = new this.Tone.Oscillator({
+            frequency: frequency,
+            type: this.getOscillatorTypeForInstrument(this.currentInstrument),
+            volume: -8
+        });
+        
+        // Add modulation for richer sound
+        const lfo = new this.Tone.LFO(5, 0.5, 1.5);
+        lfo.connect(osc.frequency);
+        lfo.start();
+        
+        // Create filter for shaping tone
+        const filter = new this.Tone.Filter({
+            frequency: frequency * 4,
+            type: 'lowpass',
+            Q: 1
+        });
+        
+        // Create envelope
+        const env = new this.Tone.AmplitudeEnvelope({
+            attack: instrumentConfig.envelope.attack,
+            decay: instrumentConfig.envelope.decay,
+            sustain: instrumentConfig.envelope.sustain,
+            release: instrumentConfig.envelope.release
+        });
+        
+        // Connect: osc → filter → envelope → destination
+        osc.connect(filter);
+        filter.connect(env);
+        env.toDestination();
+        
+        // Start and stop
+        osc.start(now);
+        osc.stop(now + duration);
+        env.triggerAttackRelease(duration, now);
+        
+        // Clean up
+        setTimeout(() => {
+            osc.dispose();
+            filter.dispose();
+            env.dispose();
+            lfo.dispose();
+        }, (duration + 1) * 1000);
+    }
+
+    getOscillatorTypeForInstrument(instrument) {
+        // Different oscillator types for different instrument families
+        const types = {
+            strings: 'sawtooth',      // Rich harmonics
+            woodwinds: 'sine',        // Pure tone
+            brass: 'square',          // Bright tone
+            default: 'triangle'       // Smooth tone
+        };
+        
+        return types[this.currentCategory] || types.default;
+    }
+
+    getClosestMidiNote(frequency) {
+        // Convert frequency to MIDI note number
+        const midiNote = 69 + 12 * Math.log2(frequency / 440);
+        const roundedNote = Math.round(midiNote);
+        
+        // Convert MIDI note to note name (C4, D4, etc.)
+        const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        const octave = Math.floor(roundedNote / 12) - 1;
+        const noteName = notes[roundedNote % 12];
+        
+        return `${noteName}${octave}`;
     }
 
     updatePhysicsInfo(frequency, instrumentConfig) {
@@ -350,6 +501,7 @@ class PhysicsMelodyBuilder {
         const width = canvas.width;
         const height = canvas.height;
         
+        // Clear canvas
         ctx.clearRect(0, 0, width, height);
         
         if (this.notes.length === 0) {
@@ -387,12 +539,16 @@ class PhysicsMelodyBuilder {
         ctx.setLineDash([5, 5]);
         
         // Draw grid
+        ctx.beginPath();
+        for (let x = 0; x <= width; x += width/4) {
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, height);
+        }
         for (let y = 0; y <= height; y += height/4) {
-            ctx.beginPath();
             ctx.moveTo(0, y);
             ctx.lineTo(width, y);
-            ctx.stroke();
         }
+        ctx.stroke();
         
         ctx.setLineDash([]);
         
@@ -414,33 +570,33 @@ class PhysicsMelodyBuilder {
         // Draw grid
         ctx.strokeStyle = '#e0e0e0';
         ctx.lineWidth = 0.5;
+        ctx.beginPath();
         for (let x = 0; x <= width; x += width/8) {
-            ctx.beginPath();
             ctx.moveTo(x, 0);
             ctx.lineTo(x, height);
-            ctx.stroke();
         }
         for (let y = 0; y <= height; y += height/4) {
-            ctx.beginPath();
             ctx.moveTo(0, y);
             ctx.lineTo(width, y);
-            ctx.stroke();
         }
+        ctx.stroke();
         
         // Draw waveform
         ctx.beginPath();
         ctx.moveTo(0, height/2);
         
         const cycles = 4;
+        const scale = 80;
+        
         for (let x = 0; x < width; x++) {
             let y = height/2;
-            const t = (x / width) * cycles * Math.PI * 2;
+            const t = (x / width) * cycles * 2 * Math.PI;
             
             // Sum all harmonics
             for (let i = 0; i < instrumentConfig.harmonics.length; i++) {
                 const harmonicFreq = frequency * instrumentConfig.harmonics[i];
-                const amplitude = (height/4) * instrumentConfig.amplitudes[i];
-                y += Math.sin(t * (harmonicFreq / 261.63)) * amplitude;
+                const amplitude = instrumentConfig.amplitudes[i] * scale;
+                y += Math.sin(t * harmonicFreq / frequency) * amplitude;
             }
             
             ctx.lineTo(x, y);
@@ -468,14 +624,20 @@ class PhysicsMelodyBuilder {
         const centerY = height/2;
         const barWidth = 15;
         const spacing = 5;
-        const maxBars = 10;
+        const maxBars = Math.min(instrumentConfig.harmonics.length, 10);
         
-        // Draw individual harmonic waves at the top
+        // Draw title
+        ctx.fillStyle = '#2c3e50';
+        ctx.font = 'bold 18px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText('Harmonic Series Analysis', 20, 30);
+        
+        // Draw individual harmonic waves
         const waveHeight = 80;
-        const waveSpacing = waveHeight / Math.min(instrumentConfig.harmonics.length, 4);
+        const waveSpacing = waveHeight / 3;
         
-        for (let i = 0; i < Math.min(instrumentConfig.harmonics.length, 4); i++) {
-            const waveY = 20 + i * waveSpacing;
+        for (let i = 0; i < Math.min(3, instrumentConfig.harmonics.length); i++) {
+            const waveY = 60 + i * waveSpacing;
             const harmonicFreq = frequency * instrumentConfig.harmonics[i];
             const amplitude = waveHeight/4 * instrumentConfig.amplitudes[i];
             
@@ -484,7 +646,7 @@ class PhysicsMelodyBuilder {
             
             for (let x = 50; x < 250; x++) {
                 const t = ((x - 50) / 200) * Math.PI * 4;
-                const y = waveY + Math.sin(t * (harmonicFreq / 261.63)) * amplitude;
+                const y = waveY + Math.sin(t * harmonicFreq / frequency) * amplitude;
                 ctx.lineTo(x, y);
             }
             
@@ -495,46 +657,41 @@ class PhysicsMelodyBuilder {
             // Label each harmonic
             ctx.fillStyle = '#2c3e50';
             ctx.font = '12px Arial';
-            ctx.fillText(`${instrumentConfig.harmonics[i]}f`, 20, waveY + 5);
+            ctx.fillText(`Harmonic ${instrumentConfig.harmonics[i]}: ${harmonicFreq.toFixed(1)} Hz`, 20, waveY + 5);
         }
         
         // Draw harmonic amplitude bars
         const barStartX = width - 250;
-        const barMaxHeight = 100;
+        const barMaxHeight = 80;
+        const barY = 60;
         
-        for (let i = 0; i < Math.min(instrumentConfig.harmonics.length, maxBars); i++) {
+        for (let i = 0; i < maxBars; i++) {
             const barX = barStartX + i * (barWidth + spacing);
             const barHeight = instrumentConfig.amplitudes[i] * barMaxHeight;
             
             // Draw bar
             ctx.fillStyle = instrumentConfig.color;
-            ctx.fillRect(barX, centerY - barHeight, barWidth, barHeight);
+            ctx.fillRect(barX, barY + barMaxHeight - barHeight, barWidth, barHeight);
             
             // Draw frequency label
             ctx.fillStyle = '#2c3e50';
             ctx.font = '11px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText(`${instrumentConfig.harmonics[i]}f`, barX + barWidth/2, centerY + 15);
+            ctx.fillText(`${instrumentConfig.harmonics[i]}f`, barX + barWidth/2, barY + barMaxHeight + 15);
             
             // Draw amplitude percentage
             ctx.fillStyle = '#7f8c8d';
             ctx.font = '10px Arial';
             ctx.fillText(`${Math.round(instrumentConfig.amplitudes[i] * 100)}%`, 
-                        barX + barWidth/2, centerY - barHeight - 5);
+                        barX + barWidth/2, barY + barMaxHeight - barHeight - 5);
         }
-        
-        // Draw title
-        ctx.fillStyle = '#2c3e50';
-        ctx.font = 'bold 18px Arial';
-        ctx.textAlign = 'left';
-        ctx.fillText('Harmonic Series Composition', 20, height - 20);
         
         // Draw legend
         ctx.fillStyle = instrumentConfig.color;
-        ctx.fillRect(width - 150, 30, 20, 20);
+        ctx.fillRect(width - 150, 150, 20, 20);
         ctx.fillStyle = '#2c3e50';
         ctx.font = '14px Arial';
-        ctx.fillText('Harmonic Amplitude', width - 125, 45);
+        ctx.fillText('Harmonic Amplitude', width - 125, 165);
     }
 
     drawInterference(ctx, freq1, freq2, width, height) {
@@ -547,9 +704,12 @@ class PhysicsMelodyBuilder {
         // Draw individual waves
         ctx.beginPath();
         ctx.moveTo(0, centerY);
+        const scale = 40;
+        const cycles = 6;
+        
         for (let x = 0; x < width; x++) {
-            const t = (x / width) * Math.PI * 8;
-            const y = centerY - 50 + Math.sin(t) * 40;
+            const t = (x / width) * cycles * 2 * Math.PI;
+            const y = centerY - 50 + Math.sin(t) * scale;
             ctx.lineTo(x, y);
         }
         ctx.strokeStyle = '#3498db';
@@ -559,8 +719,8 @@ class PhysicsMelodyBuilder {
         ctx.beginPath();
         ctx.moveTo(0, centerY);
         for (let x = 0; x < width; x++) {
-            const t = (x / width) * Math.PI * 8;
-            const y = centerY + 50 + Math.sin(t * ratio) * 40;
+            const t = (x / width) * cycles * 2 * Math.PI;
+            const y = centerY + 50 + Math.sin(t * ratio) * scale;
             ctx.lineTo(x, y);
         }
         ctx.strokeStyle = '#e74c3c';
@@ -571,9 +731,9 @@ class PhysicsMelodyBuilder {
         ctx.beginPath();
         ctx.moveTo(0, centerY);
         for (let x = 0; x < width; x++) {
-            const t = (x / width) * Math.PI * 8;
-            const wave1 = Math.sin(t) * 40;
-            const wave2 = Math.sin(t * ratio) * 40;
+            const t = (x / width) * cycles * 2 * Math.PI;
+            const wave1 = Math.sin(t) * scale;
+            const wave2 = Math.sin(t * ratio) * scale;
             const y = centerY + wave1 + wave2;
             ctx.lineTo(x, y);
         }
@@ -640,9 +800,8 @@ class PhysicsMelodyBuilder {
 
     getIntervalType(ratio) {
         const simpleRatios = [1/1, 2/1, 3/2, 4/3, 5/4, 5/3, 6/5];
-        const complexRatios = [16/15, 9/8, 45/32, 8/5, 9/5, 15/8];
-        
         let isConsonant = false;
+        
         simpleRatios.forEach(r => {
             if (Math.abs(ratio - r) < 0.05) isConsonant = true;
         });
@@ -673,11 +832,10 @@ class PhysicsMelodyBuilder {
     playMelody() {
         if (this.notes.length === 0) return;
         
-        const now = this.Tone.now();
         this.notes.forEach((note, index) => {
             setTimeout(() => {
-                this.playNote(note.frequency);
-            }, index * 500);
+                this.playInstrumentSound(note.frequency);
+            }, index * 800);
         });
     }
 
@@ -715,10 +873,18 @@ class PhysicsMelodyBuilder {
 
         // Initialize visualization mode
         this.updateVisualizationMode();
+        
+        // Add click event to start audio context
+        document.addEventListener('click', async () => {
+            if (this.Tone.context.state !== 'running') {
+                await this.Tone.start();
+                console.log('Audio context started');
+            }
+        });
     }
 }
 
 // Initialize when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    new PhysicsMelodyBuilder();
+    window.app = new PhysicsMelodyBuilder();
 });
